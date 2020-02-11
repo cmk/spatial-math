@@ -1,13 +1,9 @@
-# For more information, see: https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
+resolver: lts-14.15
 
-resolver: lts-13.11
-
-compiler-check: newer-minor
-
-# Local packages, usually specified by relative directory name
-packages:
-- .
-
-# Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
-extra-deps: [ TypeCompose-0.9.14
-            ]
+extra-deps:
+  - github: cmk/lawz
+    commit: 55c8dcdc6322f7c35c8568e1317afb5d35c3963d
+  - github: cmk/rings
+    commit: d452e74fe4c661883679d77a99d5fbcb91e03de6
+  - github: cmk/connections
+    commit: 8677bd5023c8d6c38164b409e779991e77a3e7f9
