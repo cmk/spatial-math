@@ -8,10 +8,11 @@ import Data.Algebra
 import Data.Algebra.Quaternion
 import Data.Semiring
 import Data.Semifield
-import Data.Semimodule.Basis
+import Data.Semimodule
 import Numeric.Spatial.Angle
 import Numeric.Spatial.Euler
 import Numeric.Spatial.Frame
+import Numeric.Spatial.Vector
 import Numeric.Spatial.Transform
 import Numeric.Prelude
 
@@ -25,19 +26,19 @@ quat2tran q = Tran $ \f -> index3 . vect $ q * Quaternion zero (tabulate3 f) * c
 
 -- | Convert a quaternion to its Euler angle representation.
 --
--- >>> quat2euler $ quat 1 0 0 0
+-- >>> quat2euler $ quat 1.0 0.0 0.0 0.0
 -- Euler {eYaw = 0.0, ePitch = -0.0, eRoll = 0.0}
 --
--- >>> quat2euler $ quat (1 / sqrt 2) (1 / sqrt 2) 0 0
+-- >>> quat2euler $ quat irt2 irt2 0 0
 -- Euler {eYaw = 0.0, ePitch = -0.0, eRoll = 1.5707963267948966}
 --
--- >>> quat2euler $ quat (1 / sqrt 2) 0 0 (1 / sqrt 2)
--- Euler {eYaw = 1.5707963267948966, ePitch = -0.0, eRoll = 0.0}
+-- >>> quat2euler $ quat irt2 0.0 0.0 irt2
+-- Euler {eYaw = Radian 1.5707963267948966, ePitch = Radian 0.0, eRoll = Radian 0.0}
 --
--- >>> quat2euler $ quat (1 / sqrt 2) 0 (1 / sqrt 2) 0 
+-- >>> quat2euler $ quat irt2 0.0 irt2 0.0 
 -- Euler {yaw = 0.0, pitch = 1.5707963057214724, roll = 0.0}
 --
-quat2euler :: Quaternion Double -> Euler Radian
+quat2euler :: QuatD -> Euler Radian
 quat2euler (Quaternion q0 (V3 q1 q2 q3)) = Euler y p r
   where
     r11 = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3
@@ -46,11 +47,47 @@ quat2euler (Quaternion q0 (V3 q1 q2 q3)) = Euler y p r
     r23 = 2.0 * (q2 * q3 + q0 * q1)
     r33 = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3
     clip = max (-1.0) . min 1.0
-    y = Radian $ atan2 r12 r11
-    p = Radian $ asin $ clip mr13 --returns /NaN/ if mr13 is outside [-1, 1]
-    r = Radian $ atan2 r23 r33
+    y = rad $ atan2 r12 r11
+    p = rad $ asin $ clip mr13 --returns /NaN/ if mr13 is outside [-1, 1]
+    r = rad $ atan2 r23 r33
 
+-- | Convert Euler angles to quaternion. The scalar part of the result may be positive or negative.
+--
+-- >>> euler2quat (Euler 0 0 0)
+-- Quaternion 1.0 (V3 0.0 0.0 0.0)
+--
+-- >>> euler2quat (Euler (pi/2) 0 0)
+-- Quaternion 0.7071067811865476 (V3 0.0 0.0 0.7071067811865475)
+--
+-- >>> euler2quat (Euler 0 (pi/2) 0)
+-- Quaternion 0.7071067811865476 (V3 0.0 0.7071067811865475 0.0)
+--
+-- >>> euler2quat (Euler 0 0 (pi/2))
+-- Quaternion 0.7071067811865476 (V3 0.7071067811865475 0.0 0.0)
+--
+euler2quat :: Euler Radian -> QuatD
+euler2quat (Euler yaw pitch roll) = normalize q
+  where
+    sr2 = sin $ 0.5 * unRad roll
+    cr2 = cos $ 0.5 * unRad roll
+    sp2 = sin $ 0.5 * unRad pitch
+    cp2 = cos $ 0.5 * unRad pitch
+    sy2 = sin $ 0.5 * unRad yaw
+    cy2 = cos $ 0.5 * unRad yaw
+    q0 = cr2*cp2*cy2 + sr2*sp2*sy2
+    q1 = sr2*cp2*cy2 - cr2*sp2*sy2
+    q2 = cr2*sp2*cy2 + sr2*cp2*sy2
+    q3 = cr2*cp2*sy2 - sr2*sp2*cy2
 
+    q = Quaternion q0 (V3 q1 q2 q3)
+
+-- | Obtain a unit length 'Quaternion' representing a rotation of @angle@ radians about @axis@.
+--
+-- See < https://en.wikipedia.org/wiki/Axis%I2%80%93angle_representation >
+--
+axisAngle ::  V3 Double -> Radian -> QuatD
+axisAngle ax an = normalize $ Quaternion (cos $ unRad an / 2.0) $ sin (unRad an / 2.0) *. ax
+{-# INLINE axisAngle #-}
 
 {-
 tanhrhs :: QuatD -> QuatD -> QuatD -> QuatD

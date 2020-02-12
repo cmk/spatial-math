@@ -1,22 +1,33 @@
-module Numeric.Spatial.Angle where
+module Numeric.Spatial.Angle (
+    Radian
+  , rad
+  , unRad
+  , Degree
+  , deg
+  , unDeg
+) where
 
 import Numeric.Prelude
 
 -- | An angle expressed in radians.
 --
-newtype Radian = Radian Double deriving (Eq, Show)
-
-unRadian :: Radian -> Double
-unRadian (Radian x) = x
+newtype Radian = Rad Double deriving (Eq, Show)
 
 rad :: Double -> Radian
-rad x = Radian $ fmod x (pi*2.0)
+rad x = Rad $ fmod x (pi*2.0)
+
+unRad :: Radian -> Double
+unRad (Rad x) = x
 
 -- | An angle expressed in degrees.
 --
-newtype Degree x = Degree x deriving (Eq, Show)
+newtype Degree = Deg Double deriving (Eq, Show)
 
+deg :: Double -> Radian
+deg x = Rad $ fmod x 180.0
 
+unDeg :: Degree -> Double
+unDeg (Deg x) = x
 
 {-
 -- Functor and Applicative instance

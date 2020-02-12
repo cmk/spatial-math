@@ -2,8 +2,9 @@
 
 module Numeric.Spatial.Frame where
 
-import Data.Semimodule.Basis
 import Data.Semimodule.Transform
+import Data.Semimodule.Vector
+import Numeric.Spatial.Matrix
 
 import Numeric.Prelude
 
@@ -35,7 +36,7 @@ data Frame =
   | P
   | Q
   | R -- ^ Rotor frame, representing a rotor hub.
-  | S
+  | S -- ^ Stability frame, representing aircraft heading perturbations wrt wind.
   | T -- ^ Tilt frame for use in differentiating tilt-wing/tilt-rotor frames from cad, rotor, and wind frames
   | U -- ^ < https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates East-North-Up > frame, representing a global origin.
   | W -- ^ Wind frame, representing a particle moving with the local windstream.

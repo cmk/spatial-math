@@ -9,7 +9,7 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
-import Data.Semimodule.Basis
+import Numeric.Spatial.Vector
 import Data.Semiring
 import Numeric.Prelude
 import Numeric.Spatial.Frame

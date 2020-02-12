@@ -9,10 +9,10 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
-import Data.Semimodule.Basis
 import Data.Semiring
 import Numeric.Prelude
 import Numeric.Spatial.Frame
+import Numeric.Spatial.Vector
 
 -- | A vector in the < https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates North-East-Down > frame.
 --

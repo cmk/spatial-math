@@ -9,10 +9,10 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
-import Data.Semimodule.Basis
 import Data.Semiring
 import Numeric.Prelude
 import Numeric.Spatial.Frame
+import Numeric.Spatial.Vector
 
 -- | A vector in the wind frame.
 --

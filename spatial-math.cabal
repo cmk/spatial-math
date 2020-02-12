@@ -30,6 +30,8 @@ library
     , Numeric.Spatial.Frame.Wind
     , Numeric.Spatial.Quaternion
 
+    , Numeric.Spatial.Vector
+    , Numeric.Spatial.Matrix
     , Numeric.Spatial.Transform
 
   default-extensions:
