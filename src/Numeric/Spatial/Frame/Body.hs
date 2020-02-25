@@ -1,6 +1,5 @@
 module Numeric.Spatial.Frame.Body (
-    B3
-  , b31, b32, b33
+    b31, b32, b33
   , Body(..)
 ) where
 
@@ -9,7 +8,7 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
-import Numeric.Spatial.Vector
+import Data.Semimodule.Basis
 import Data.Semiring
 import Numeric.Prelude
 import Numeric.Spatial.Frame
@@ -18,10 +17,10 @@ import Numeric.Spatial.Frame
 --
 data Body a = Body !a !a !a deriving (Eq,Show,Functor)
 
-b31, b32, b33 :: B3 
-b31 = F3 I31
-b32 = F3 I32
-b33 = F3 I33
+b31, b32, b33 :: F3 'B 
+b31 = F3 E31
+b32 = F3 E32
+b33 = F3 E33
 
 -- | Vector addition.
 --
@@ -65,9 +64,13 @@ instance (Additive-Group) a => Loop (Additive (Body a))
 instance (Additive-Group) a => Group (Body a)
 instance (Additive-Group) a => Group (Additive (Body a)) 
 
-instance Semiring a => Semimodule a (Body a) where
-  a *. f = (a *) <$> f
-  {-# INLINE (*.) #-}
+instance Semiring a => LeftSemimodule a (Body a) where 
+  lscale = lscaleDef
+
+instance Semiring a => RightSemimodule a (Body a) where 
+  rscale = rscaleDef
+
+instance Semiring a => Bisemimodule a a (Body a)
 
 instance Foldable Body where
   foldMap f (Body a b c) = f a <> f b <> f c
@@ -84,11 +87,11 @@ instance Distributive Body where
   {-# INLINE distribute #-}
 
 instance Representable Body where
-  type Rep Body = B3
+  type Rep Body = F3 'B 
   tabulate f = Body (f b31) (f b32) (f b33)
   {-# INLINE tabulate #-}
 
-  index (Body x _ _) (F3 I31) = x
-  index (Body _ y _) (F3 I32) = y
-  index (Body _ _ z) (F3 I33) = z
+  index (Body x _ _) (F3 E31) = x
+  index (Body _ y _) (F3 E32) = y
+  index (Body _ _ z) (F3 E33) = z
   {-# INLINE index #-}

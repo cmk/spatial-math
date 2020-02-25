@@ -2,12 +2,11 @@
 
 module Numeric.Spatial.Frame where
 
-import Data.Semimodule.Transform
-import Data.Semimodule.Vector
-import Numeric.Spatial.Matrix
+import Data.Semimodule.Algebra
+import Data.Semimodule.Basis
 
 import Numeric.Prelude
-
+import qualified Control.Monad as M
 
 type T22 a i j = Tran a (F2 j) (F2 i)
 
@@ -47,8 +46,33 @@ data Frame =
 
 -- | A 2-d basis index tagged with a frame of reference.
 --
-newtype F2 (f :: Frame) = F2 { unF2 :: I2 } deriving (Eq, Show)
+newtype F2 (f :: Frame) = F2 { unF2 :: E2 } deriving (Eq, Show)
 
+
+-- | A 3-d basis index tagged with a frame of reference.
+--
+newtype F3 (f :: Frame) = F3 { unF3 :: E3 } deriving (Eq, Show)
+
+instance Semiring r => Algebra r (F3 f) where
+  joined = M.join
+
+instance Semiring r => Unital r (F3 f) where
+  unital = const
+
+instance Semiring r => Coalgebra r (F3 f) where
+  cojoined f = (cojoined $ f . F3) `on` unF3 --(f . _) --coappend (on f unF3) x
+
+instance Semiring r => Counital r (F3 f) where
+  counital f = f (F3 E31) + f (F3 E32) + f (F3 E33)
+
+instance Semiring r => Bialgebra r (F3 f)
+
+-- | A 4-d basis index tagged with a frame of reference.
+--
+newtype F4 (f :: Frame) = F4 { unF4 :: E4 } deriving (Eq, Show)
+
+
+{-
 type A2 = F2 'A
 type B2 = F2 'B
 type C2 = F2 'C
@@ -72,10 +96,6 @@ type W2 = F2 'W
 type X2 = F2 'X
 type Y2 = F2 'Y
 type Z2 = F2 'Z
-
--- | A 3-d basis index tagged with a frame of reference.
---
-newtype F3 (f :: Frame) = F3 { unF3 :: I3 } deriving (Eq, Show)
 
 type A3 = F3 'A
 type B3 = F3 'B
@@ -101,10 +121,6 @@ type X3 = F3 'X
 type Y3 = F3 'Y
 type Z3 = F3 'Z
 
--- | A 4-d basis index tagged with a frame of reference.
---
-newtype F4 (f :: Frame) = F4 { unF4 :: I4 } deriving (Eq, Show)
-
 type A4 = F4 'A
 type B4 = F4 'B
 type C4 = F4 'C
@@ -128,3 +144,4 @@ type W4 = F4 'W
 type X4 = F4 'X
 type Y4 = F4 'Y
 type Z4 = F4 'Z
+-}

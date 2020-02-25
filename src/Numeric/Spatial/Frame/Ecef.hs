@@ -1,6 +1,5 @@
 module Numeric.Spatial.Frame.Ecef  (
-    E3
-  , e31, e32, e33
+    e31, e32, e33
   , Ecef(..)
 ) where
 
@@ -9,10 +8,10 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
-import Numeric.Spatial.Vector
+import Data.Semimodule.Basis
+import Numeric.Spatial.Frame
 import Data.Semiring
 import Numeric.Prelude
-import Numeric.Spatial.Frame
 
 -- | A vector in the < https://en.wikipedia.org/wiki/ECEF > frame.
 --
@@ -20,10 +19,10 @@ import Numeric.Spatial.Frame
 --
 data Ecef a = Ecef !a !a !a deriving (Eq,Show,Functor)
 
-e31, e32, e33 :: E3 
-e31 = F3 I31
-e32 = F3 I32
-e33 = F3 I33
+e31, e32, e33 :: F3 'E
+e31 = F3 E31
+e32 = F3 E32
+e33 = F3 E33
 
 -- | Vector addition.
 --
@@ -67,9 +66,14 @@ instance (Additive-Group) a => Loop (Additive (Ecef a))
 instance (Additive-Group) a => Group (Ecef a)
 instance (Additive-Group) a => Group (Additive (Ecef a)) 
 
-instance Semiring a => Semimodule a (Ecef a) where
-  a *. f = (a *) <$> f
-  {-# INLINE (*.) #-}
+
+instance Semiring a => LeftSemimodule a (Ecef a) where 
+  lscale = lscaleDef
+
+instance Semiring a => RightSemimodule a (Ecef a) where 
+  rscale = rscaleDef
+
+instance Semiring a => Bisemimodule a a (Ecef a)
 
 instance Foldable Ecef where
   foldMap f (Ecef a b c) = f a <> f b <> f c
@@ -86,11 +90,11 @@ instance Distributive Ecef where
   {-# INLINE distribute #-}
 
 instance Representable Ecef where
-  type Rep Ecef = E3
+  type Rep Ecef = F3 'E
   tabulate f = Ecef (f e31) (f e32) (f e33)
   {-# InLInE tabulate #-}
 
-  index (Ecef x _ _) (F3 I31) = x
-  index (Ecef _ y _) (F3 I32) = y
-  index (Ecef _ _ z) (F3 I33) = z
+  index (Ecef x _ _) (F3 E31) = x
+  index (Ecef _ y _) (F3 E32) = y
+  index (Ecef _ _ z) (F3 E33) = z
   {-# INLINE index #-}

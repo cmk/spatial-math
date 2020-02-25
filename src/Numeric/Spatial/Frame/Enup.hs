@@ -1,6 +1,5 @@
 module Numeric.Spatial.Frame.Enup  (
-    U3
-  , u31, u32, u33
+    u31, u32, u33
   , Enup(..)
 ) where
 
@@ -9,19 +8,19 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
+import Data.Semimodule.Basis
 import Data.Semiring
 import Numeric.Prelude
 import Numeric.Spatial.Frame
-import Numeric.Spatial.Vector
 
 -- | A vector in the < https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates North-East-Down > frame.
 --
 data Enup a = Enup !a !a !a deriving (Eq,Show,Functor)
 
-u31, u32, u33 :: U3 
-u31 = F3 I31
-u32 = F3 I32
-u33 = F3 I33
+u31, u32, u33 :: F3 'U 
+u31 = F3 E31
+u32 = F3 E32
+u33 = F3 E33
 
 -- | Vector addition.
 --
@@ -65,9 +64,14 @@ instance (Additive-Group) a => Loop (Additive (Enup a))
 instance (Additive-Group) a => Group (Enup a)
 instance (Additive-Group) a => Group (Additive (Enup a)) 
 
-instance Semiring a => Semimodule a (Enup a) where
-  a *. f = (a *) <$> f
-  {-# INLINE (*.) #-}
+
+instance Semiring a => LeftSemimodule a (Enup a) where 
+  lscale = lscaleDef
+
+instance Semiring a => RightSemimodule a (Enup a) where 
+  rscale = rscaleDef
+
+instance Semiring a => Bisemimodule a a (Enup a)
 
 instance Foldable Enup where
   foldMap f (Enup a b c) = f a <> f b <> f c
@@ -84,11 +88,11 @@ instance Distributive Enup where
   {-# INLINE distribute #-}
 
 instance Representable Enup where
-  type Rep Enup = U3
+  type Rep Enup = F3 'U
   tabulate f = Enup (f u31) (f u32) (f u33)
   {-# InLInE tabulate #-}
 
-  index (Enup x _ _) (F3 I31) = x
-  index (Enup _ y _) (F3 I32) = y
-  index (Enup _ _ z) (F3 I33) = z
+  index (Enup x _ _) (F3 E31) = x
+  index (Enup _ y _) (F3 E32) = y
+  index (Enup _ _ z) (F3 E33) = z
   {-# INLINE index #-}

@@ -20,18 +20,15 @@ library
 
   exposed-modules:
       Numeric.Spatial.Angle
-    , Numeric.Spatial.DCM
-    , Numeric.Spatial.Euler
+
     , Numeric.Spatial.Frame
     , Numeric.Spatial.Frame.Body
     , Numeric.Spatial.Frame.Nedn
     , Numeric.Spatial.Frame.Enup
     , Numeric.Spatial.Frame.Ecef
     , Numeric.Spatial.Frame.Wind
-    , Numeric.Spatial.Quaternion
 
     , Numeric.Spatial.Vector
-    , Numeric.Spatial.Matrix
     , Numeric.Spatial.Transform
 
   default-extensions:
@@ -46,6 +43,7 @@ library
     , TypeOperators
     , TypeFamilies
     , DeriveFunctor
+    , DataKinds
 
   build-depends:       
       base           >= 4.10    && < 5.0
@@ -54,7 +52,7 @@ library
     , connections    >= 0.0.3   && < 0.1
     , distributive   >= 0.3     && < 1.0
     , semigroupoids  >= 5.0     && < 6.0
-    , rings          >= 0.0.3   && < 0.1
+    , rings          >= 0.1.1.1 && < 0.1.2
 
   hs-source-dirs:      src
 
@@ -67,7 +65,7 @@ test-suite test
     , connections    >= 0.0.3   && < 0.1
     , distributive   >= 0.3     && < 1.0
     , semigroupoids  >= 5.0     && < 6.0
-    , rings          >= 0.0.3   && < 0.1
+    , rings          >= 0.1.1.1 && < 0.1.2
     , spatial-math
 
   default-extensions:

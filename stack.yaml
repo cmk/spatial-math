@@ -1,9 +1,11 @@
-resolver: lts-14.15
+resolver: lts-14.18
 
 extra-deps:
   - github: cmk/lawz
     commit: 55c8dcdc6322f7c35c8568e1317afb5d35c3963d
+  - github: cmk/magmas
+    commit: f86a7433ffa13407b939280523feb661143a800a
   - github: cmk/rings
-    commit: 9ad5b2a128f4ec1e730f6f89791326d67e3957d6
+    commit: 76d641c229eece62bfd3bcc3d018a6c65a0cddad
   - github: cmk/connections
-    commit: 8677bd5023c8d6c38164b409e779991e77a3e7f9
+    commit: d01e20e9de2afb7821efeedf4ecddf3293844849

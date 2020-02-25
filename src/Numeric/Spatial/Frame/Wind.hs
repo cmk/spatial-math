@@ -1,6 +1,5 @@
 module Numeric.Spatial.Frame.Wind (
-    W3
-  , w31, w32, w33
+    w31, w32, w33
   , Wind(..)
 ) where
 
@@ -9,19 +8,19 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
+import Data.Semimodule.Basis
 import Data.Semiring
 import Numeric.Prelude
 import Numeric.Spatial.Frame
-import Numeric.Spatial.Vector
 
 -- | A vector in the wind frame.
 --
 data Wind a = Wind !a !a !a deriving (Eq,Show,Functor)
 
-w31, w32, w33 :: W3 
-w31 = F3 I31
-w32 = F3 I32
-w33 = F3 I33
+w31, w32, w33 :: F3 'W 
+w31 = F3 E31
+w32 = F3 E32
+w33 = F3 E33
 
 -- | Vector addition.
 --
@@ -65,9 +64,13 @@ instance (Additive-Group) a => Loop (Additive (Wind a))
 instance (Additive-Group) a => Group (Wind a)
 instance (Additive-Group) a => Group (Additive (Wind a)) 
 
-instance Semiring a => Semimodule a (Wind a) where
-  a *. f = (a *) <$> f
-  {-# INLINE (*.) #-}
+instance Semiring a => LeftSemimodule a (Wind a) where 
+  lscale = lscaleDef
+
+instance Semiring a => RightSemimodule a (Wind a) where 
+  rscale = rscaleDef
+
+instance Semiring a => Bisemimodule a a (Wind a)
 
 instance Foldable Wind where
   foldMap f (Wind a b c) = f a <> f b <> f c
@@ -84,11 +87,11 @@ instance Distributive Wind where
   {-# INLINE distribute #-}
 
 instance Representable Wind where
-  type Rep Wind = W3
+  type Rep Wind = F3 'W 
   tabulate f = Wind (f w31) (f w32) (f w33)
   {-# INLINE tabulate #-}
 
-  index (Wind x _ _) (F3 I31) = x
-  index (Wind _ y _) (F3 I32) = y
-  index (Wind _ _ z) (F3 I33) = z
+  index (Wind x _ _) (F3 E31) = x
+  index (Wind _ y _) (F3 E32) = y
+  index (Wind _ _ z) (F3 E33) = z
   {-# INLINE index #-}

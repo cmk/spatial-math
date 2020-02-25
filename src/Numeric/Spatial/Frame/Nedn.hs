@@ -1,6 +1,5 @@
 module Numeric.Spatial.Frame.Nedn  (
-    D3
-  , d31, d32, d33
+    d31, d32, d33
   , Nedn(..)
 ) where
 
@@ -9,19 +8,19 @@ import Data.Foldable
 import Data.Functor.Rep
 import Data.Semigroup.Foldable as Foldable1
 import Data.Semimodule
+import Data.Semimodule.Basis
 import Data.Semiring
 import Numeric.Prelude
 import Numeric.Spatial.Frame
-import Numeric.Spatial.Vector
 
 -- | A vector in the < https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates North-East-Down > frame.
 --
 data Nedn a = Nedn !a !a !a deriving (Eq,Show,Functor)
 
-d31, d32, d33 :: D3 
-d31 = F3 I31
-d32 = F3 I32
-d33 = F3 I33
+d31, d32, d33 :: F3 'D 
+d31 = F3 E31
+d32 = F3 E32
+d33 = F3 E33
 
 -- | Vector addition.
 --
@@ -65,9 +64,15 @@ instance (Additive-Group) a => Loop (Additive (Nedn a))
 instance (Additive-Group) a => Group (Nedn a)
 instance (Additive-Group) a => Group (Additive (Nedn a)) 
 
-instance Semiring a => Semimodule a (Nedn a) where
-  a *. f = (a *) <$> f
-  {-# INLINE (*.) #-}
+
+
+instance Semiring a => LeftSemimodule a (Nedn a) where 
+  lscale = lscaleDef
+
+instance Semiring a => RightSemimodule a (Nedn a) where 
+  rscale = rscaleDef
+
+instance Semiring a => Bisemimodule a a (Nedn a)
 
 instance Foldable Nedn where
   foldMap f (Nedn a b c) = f a <> f b <> f c
@@ -84,11 +89,11 @@ instance Distributive Nedn where
   {-# INLINE distribute #-}
 
 instance Representable Nedn where
-  type Rep Nedn = D3
+  type Rep Nedn = F3 'D
   tabulate f = Nedn (f d31) (f d32) (f d33)
   {-# InLInE tabulate #-}
 
-  index (Nedn x _ _) (F3 I31) = x
-  index (Nedn _ y _) (F3 I32) = y
-  index (Nedn _ _ z) (F3 I33) = z
+  index (Nedn x _ _) (F3 E31) = x
+  index (Nedn _ y _) (F3 E32) = y
+  index (Nedn _ _ z) (F3 E33) = z
   {-# INLINE index #-}
